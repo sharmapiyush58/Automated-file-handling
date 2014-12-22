@@ -1,0 +1,87 @@
+import zipfile
+
+try: 
+	from xml.etree.cElementTree import XML
+except:
+	from xml.etree.ElementTree import XML
+
+import xml.etree.ElementTree
+
+
+class Error (Exception):
+	"""Base class for exceptions in this module."""
+	pass
+
+class Paragraph (Error):
+	"""The class that raises exceptions with regard to the starting of a paragraph"""
+	pass
+
+def get_word_xml (file):
+	
+	zip = zipfile.ZipFile(file)
+	xml_content = zip.read('word/document.xml')
+	
+	#print(xml_content)
+	#print(zip)
+	#return(xml_content)
+	tree = XML(xml_content)
+	print(tree)
+	xml_string = xml.etree.ElementTree.tostring (tree, encoding="us-ascii", method="xml", short_empty_elements=True)
+	#print(xml.etree.ElementTree.tostring (tree, encoding="us-ascii", method="xml", short_empty_elements=True))
+	
+	space = 0
+	index_xml_string = -1
+	len_xml_string = len(repr(xml_string))
+	final_string = repr(xml_string)
+	
+	"""code for decent formatting  and displaying with features of indentation on branches, one complete line when writing text, indentation reduces as a branch closes"""
+	while index_xml_string < len_xml_string:
+		try:
+			if final_string[index_xml_string:index_xml_string + 6] == '<ns0:t':
+				raise Paragraph
+		except:
+			while final_string[index_xml_string:index_xml_string + 7] != '</ns0:t':
+				print(final_string[index_xml_string], end='')
+				index_xml_string = index_xml_string + 1
+			print('</ns0:t>')
+			index_xml_string = index_xml_string + 8
+		else:
+			if final_string[index_xml_string:index_xml_string + 5] == '<ns0:':
+				space = space + 4
+				if final_string[index_xml_string-2:index_xml_string] == "b'":
+					space = space - 4
+				print(space*' ', end='')
+			elif final_string[index_xml_string:index_xml_string + 6] == '</ns0:':
+				space = space - 4
+				print(space*' ', end='')
+			
+			i = final_string[index_xml_string]
+			if i == '>':
+				print('>')
+			else:
+				print(i, end='')
+			index_xml_string = index_xml_string + 1
+	"""
+		for i in repr(xml_string):				
+			index_xml_string = index_xml_string + 1
+		
+			if repr(xml_string)[index_xml_string:index_xml_string + 5] == '<ns0:':
+				space = space + 4
+				if repr(test)[index_xml_string-2:index_xml_string] == "b'":
+					space = space - 4
+				print(space*' ', end='')
+			elif repr(xml_string)[index_xml_string:index_xml_string + 6] == '</ns0:':
+				space = space - 4
+				print(space*' ', end='')
+		
+			if i == '>':
+				print('>')
+			else:
+				print(i, end='')
+			"""
+	
+"""
+def get_xml_tree(xml_string)
+	return etree.fromstring(xml_string)
+"""	
+get_word_xml ('Jaba.docx')
