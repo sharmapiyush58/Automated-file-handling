@@ -1,0 +1,26 @@
+import zipfile
+
+try: 
+	from xml.etree.cElementTree import XML
+except:
+	from xml.etree.ElementTree import XML
+
+import xml.etree.ElementTree
+
+
+def get_word_xml (file):
+	
+	zip = zipfile.ZipFile(file)
+	xml_content = zip.read('word/document.xml')
+	
+	tree = XML(xml_content)
+	print(tree)
+	xml_string = xml.etree.ElementTree.tostring (tree, encoding="us-ascii", method="xml", short_empty_elements=True)
+	
+	len_xml_string = len(repr(xml_string))
+	final_string = repr(xml_string)
+	
+	print(final_string)
+	
+	
+get_word_xml ('Jaba.docx')
