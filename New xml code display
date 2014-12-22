@@ -13,7 +13,7 @@ class Error (Exception):
 	pass
 
 class Paragraph (Error):
-	"""The class that raises exceptions with regard to the starting of a paragraph"""
+	"""The class that raises exceptions with regard to the starting of a paragraph."""
 	pass
 
 def get_word_xml (file):
