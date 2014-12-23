@@ -1,0 +1,48 @@
+import os
+import glob
+#os.chdir ("F:\Exploring\Impact\Impact-case studies")
+import zipfile
+
+try: 
+	from xml.etree.cElementTree import XML
+except:
+	from xml.etree.ElementTree import XML
+
+import xml.etree.ElementTree
+
+
+def get_Labels (file):
+	
+	zip = zipfile.ZipFile(file)
+	xml_content = zip.read('word/document.xml')
+	
+	tree = XML(xml_content)
+	xml_string = xml.etree.ElementTree.tostring (tree, encoding="us-ascii", method="xml", short_empty_elements=True)
+	
+	len_xml_string = len(repr(xml_string))
+	final_string = repr(xml_string)
+	index_final_string = -1
+	Label_string = ''
+	
+	while index_final_string < len_xml_string:
+		if final_string[index_final_string:index_final_string + 8] == 'Labels: ':
+			index_final_string = index_final_string + 8
+			while final_string[index_final_string:index_final_string + 7] != '</ns0:t':
+				Label_string = Label_string + final_string[index_final_string]
+				index_final_string = index_final_string + 1
+		index_final_string = index_final_string + 1
+	
+	return(Label_string)
+
+filelist = []
+
+for file in glob.glob("*.docx"):
+	filelist.append(file)
+
+Labels_dictionary = {}
+	
+for i in filelist:
+	Labels = get_Labels(i)
+	Labels_dictionary.update({i: Labels})
+	
+print(Labels_dictionary)
